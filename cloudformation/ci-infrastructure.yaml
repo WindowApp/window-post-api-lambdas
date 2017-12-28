@@ -217,6 +217,8 @@ Resources:
         EnvironmentVariables:
           - Name: BUILD_ARTIFACT_BUCKET
             Value: !Ref DeploymentArtifactBucket
+          - Name: GRADLE_REPO_BUCKET
+            Value: window-artifacts-repo
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10

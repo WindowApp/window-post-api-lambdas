@@ -24,7 +24,7 @@ buildscript {
     dependencies {
         classpath 'com.amazonaws:aws-java-sdk-core:1.11.5'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4' // latest vwrsion for Gradle 2.7 (AWS)
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4' // latest version for Gradle 2.7 (AWS)
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.5' // latest version for Gradle 2.7
     }
 }
@@ -41,7 +41,7 @@ repositories {
     mavenLocal()
     mavenCentral()
 
-    def defaultCredentials = fetchAwsCredentials()
+    /*def defaultCredentials = null//fetchAwsCredentials()
     if (defaultCredentials != null) {
         logger.info("Got AWS credentials, adding S3 repo")
         ivy {
@@ -53,6 +53,14 @@ repositories {
             layout "pattern", {
                 artifact "[artifact]-[revision].[ext]"
             }
+        }
+    }*/
+
+    // Downloaded by buildspec.yml
+    ivy {
+        url "file:build/window-artifacts-local/gradle-ivy"
+        layout "pattern", {
+            artifact "[artifact]-[revision].[ext]"
         }
     }
 }

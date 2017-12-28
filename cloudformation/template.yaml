@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform:
+- AWS::Serverless-2016-10-31
+
+Resources:
+  ###
+  ### Roles
+  ###
+  WindowPostApisExecutionRole: # TODO: separate roles for different functions
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudFormationServicePolicy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource:
+                  - !Sub "arn:aws:s3:::${AWS::StackName}-${AWS::Region}-${AWS::AccountId}*"
+
+  ###
+  ### Lambdas
+  ###
+  SubmitPost:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: codes.rik.window.api.post.handler.SubmitHandler
+      CodeUri: ../build/libs/post-api-lambdas-0.1-all.jar
+      Runtime: java8
+      Role: !GetAtt WindowPostApisExecutionRole.Arn
+      Events:
+        PostEvent:
+          Type: Api
+          Properties:
+            Path: /submit
+            Method: post

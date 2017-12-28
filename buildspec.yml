@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - gradle shadowJar
+  post_build:
+    commands:
+      - mkdir build/cloudformation
+      - cd build/cloudformation
+      - unzip ../libs/post-api-lambdas-0.1-all.jar
+      - aws cloudformation package
+           --template-file ../../templates/template.yaml
+           --s3-bucket $BUILD_ARTIFACT_BUCKET
+           --output-template-file template-export.yaml
+artifacts:
+  files:
+    - build/cloudformation/template-export.yaml
+  discard-paths: yes

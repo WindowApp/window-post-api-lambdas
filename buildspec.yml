@@ -10,7 +10,7 @@ phases:
       - cd build/cloudformation
       - unzip ../libs/post-api-lambdas-0.1-all.jar
       - aws cloudformation package
-           --template-file ../../templates/template.yaml
+           --template-file ../../cloudformation/template.yaml
            --s3-bucket $BUILD_ARTIFACT_BUCKET
            --output-template-file template-export.yaml
 artifacts:

@@ -1,5 +1,4 @@
 import com.amazonaws.auth.*
-import com.amazonaws.auth.profile.*
 
 group 'codes.rik.window'
 version '0.1'
@@ -25,8 +24,8 @@ buildscript {
     dependencies {
         classpath 'com.amazonaws:aws-java-sdk-core:1.11.5'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4' // using old version for AWS old Gradle compat
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.2'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4' // latest vwrsion for Gradle 2.7 (AWS)
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.5' // latest version for Gradle 2.7
     }
 }
 

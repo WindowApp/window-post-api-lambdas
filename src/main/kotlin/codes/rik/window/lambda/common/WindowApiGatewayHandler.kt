@@ -24,6 +24,10 @@ abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMes
         private val prototype: I
 ) : RequestStreamHandler {
 
+    init {
+        logger.debug { "Environment = ${System.getenv()}" }
+    }
+
     override fun handleRequest(input: InputStream, output: OutputStream, context: Context) {
         // Receive input string
         val inputString = CharStreams.toString(InputStreamReader(input, UTF_8))

@@ -1,5 +1,6 @@
 package codes.rik.window.lambda.common
 
+import codes.rik.window.api.post.environment.Environment
 import codes.rik.window.gson
 import codes.rik.window.lambda.common.ContentType.JSON
 import codes.rik.window.lambda.common.ContentType.PROTOBUF
@@ -19,14 +20,10 @@ import java.util.*
 import kotlin.text.Charsets.UTF_8
 
 private val logger = KotlinLogging.logger {}
-
 abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMessage>(
         private val prototype: I
 ) : RequestStreamHandler {
-
-    init {
-        logger.debug { "Environment = ${System.getenv()}" }
-    }
+    protected val environment = Environment.current
 
     override fun handleRequest(input: InputStream, output: OutputStream, context: Context) {
         // Receive input string

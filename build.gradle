@@ -89,6 +89,7 @@ dependencies {
         // AWS
         'com.amazonaws:aws-lambda-java-core:1.1.0',
         'com.amazonaws:aws-lambda-java-log4j:1.0.0',
+        'com.amazonaws:aws-java-sdk-s3:1.11.255',
 
         // Gson
         'com.github.salomonbrys.kotson:kotson:2.5.0',
@@ -135,5 +136,5 @@ idea {
 
 task runLocal(type: Exec) {
     dependsOn("shadowJar")
-    commandLine 'sam', 'local', 'start-api', '-t', 'cloudformation/template.yaml'
+    commandLine 'sam', 'local', 'start-api', '-t', 'cloudformation/template.yaml', '--profile', 'window-dev-rik'
 }

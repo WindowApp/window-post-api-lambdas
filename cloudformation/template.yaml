@@ -8,37 +8,58 @@ Resources:
   ###
   ### Roles
   ###
-  WindowPostApisExecutionRole: # TODO: separate roles for different functions
+
+  # A role for the lambda
+  LambdasExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - lambda.amazonaws.com
-          Action:
-          - sts:AssumeRole
-      Policies:
-        - PolicyName: CloudFormationServicePolicy
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:GetObject
-                  - s3:PutObject
-                Resource:
-                  - !GetAtt PostInputBucket.Arn
+          - Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+            Action:
+            - sts:AssumeRole
+
+  LambdasExecutionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: WindowPostApiLambasExecutionPolicy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+            Resource:
+              - !Sub "${PostInputBucket.Arn}/*"
+              - arn:aws:s3:::window-post-api-lambdas-postinputbucket-test/*
+      Roles:
+      - !Ref LambdasExecutionRole
+      Groups:
+      - !Ref LambdasExecutionGroup
+
+  ###
+  ### IAM groups
+  ###
+
+  # A group for users whom can assume the role
+  LambdasExecutionGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: window-post-api-lambdas-execution
 
   ###
   ### Lambdas
   ###
   CreatePost:
     Type: AWS::Serverless::Function
+    DependsOn: LambdasExecutionRole
     Properties:
       Handler: codes.rik.window.api.post.handler.CreatePostHandler
-      Role: !GetAtt WindowPostApisExecutionRole.Arn
+      Role: !GetAtt LambdasExecutionRole.Arn
       CodeUri: ../build/libs/post-api-lambdas-0.1-all.jar
       Timeout: 15
       MemorySize: 128
@@ -59,3 +80,4 @@ Resources:
   PostInputBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
+

@@ -282,13 +282,13 @@ Resources:
                 ParameterOverrides: !Ref ProjectParameterOverrides
                 TemplatePath: BuildOutputArtifact::template-export.yaml
               RunOrder: 1
-            - Name: ApprovalForRelease
-              ActionTypeId:
-                Category: Approval
-                Owner: AWS
-                Version: 1
-                Provider: Manual
-              RunOrder: 2
+            #- Name: ApprovalForRelease
+            #  ActionTypeId:
+            #    Category: Approval
+            #    Owner: AWS
+            #    Version: 1
+            #    Provider: Manual
+            #  RunOrder: 2
             - Name: ExecuteChangeSet
               ActionTypeId:
                 Category: Deploy

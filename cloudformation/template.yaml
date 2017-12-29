@@ -36,8 +36,9 @@ Resources:
   SubmitPost:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: codes.rik.window.api.post.handler.SubmitHandler
+      Handler: codes.rik.window.api.post.handler.SubmitPostHandler
       CodeUri: ../build/libs/post-api-lambdas-0.1-all.jar
+      Timeout: 10
       Runtime: java8
       Role: !GetAtt WindowPostApisExecutionRole.Arn
       Events:

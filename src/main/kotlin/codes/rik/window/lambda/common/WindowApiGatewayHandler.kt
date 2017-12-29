@@ -1,5 +1,8 @@
 package codes.rik.window.lambda.common
 
+import codes.rik.window.lambda.common.ContentType.JSON
+import codes.rik.window.lambda.common.ContentType.PROTOBUF
+import codes.rik.window.windowObjectMapper
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -7,15 +10,17 @@ import com.google.common.io.CharStreams
 import com.google.protobuf.AbstractMessage
 import com.google.protobuf.Message
 import mu.KLogging
+import mu.KotlinLogging
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
 import java.util.*
 
+private val logger = KotlinLogging.logger {}
+
 abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMessage>(
         private val prototype: I
 ) : RequestStreamHandler {
-    companion object: KLogging()
 
     override fun handleRequest(input: InputStream, output: OutputStream, context: Context) {
         // Receive input string
@@ -49,21 +54,21 @@ abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMes
     abstract fun handle(input: I, callback: (O) -> Unit)
 
     @Suppress("UNCHECKED_CAST")
-    private fun parseRequestBody(input: ApiGatewayInput): I = when(input.headers?.contentType ?: ContentType.PROTOBUF) {
-        ContentType.PROTOBUF -> prototype.parserForType.parseFrom(Base64.getDecoder().decode(input.body)) as I
-        ContentType.JSON -> prototype.newFromJson(input.body) as I
+    private fun parseRequestBody(input: ApiGatewayInput): I = when(input.headers?.contentType ?: PROTOBUF) {
+        PROTOBUF -> prototype.parserForType.parseFrom(Base64.getDecoder().decode(input.body)) as I
+        JSON -> prototype.newFromJson(input.body) as I
     }
 
-    private fun encodeResponseBody(input: ApiGatewayInput, response: O) = when(input.headers?.accept ?: ContentType.PROTOBUF) {
-        ContentType.PROTOBUF -> BinaryOutputBody(response.toByteArray())
-        ContentType.JSON -> StringOutputBody(com.google.protobuf.util.JsonFormat.printer().print(response))
+    private fun encodeResponseBody(input: ApiGatewayInput, response: O) = when(input.headers?.accept ?: PROTOBUF) {
+        PROTOBUF -> BinaryOutputBody(response.toByteArray())
+        JSON -> StringOutputBody(com.google.protobuf.util.JsonFormat.printer().print(response))
     }
 }
-
-private val objectMapper = jacksonObjectMapper()
 
 private fun AbstractMessage.newFromJson(json: String): Message {
     val builder = this.newBuilderForType()
     com.google.protobuf.util.JsonFormat.parser().merge(json, builder)
     return builder.build()
 }
+
+private val objectMapper = windowObjectMapper

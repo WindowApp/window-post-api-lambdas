@@ -1,5 +1,6 @@
 package codes.rik.window.lambda.common
 
+import codes.rik.window.windowObjectMapper
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -22,4 +23,4 @@ data class ApiGatewayInput(
             @JsonProperty("Accept") val accept: ContentType?)
 }
 
-private val objectMapper = jacksonObjectMapper()
+private val objectMapper = windowObjectMapper

@@ -10,6 +10,12 @@ Post APIs
 Composite build:
 `gradle --include-build ../window-api-models generateProto`
 
+#### Local testing
+
+(needs AWS SAM Local)
+
+`gradle runLocal --include-build ../window-api-models shadowJar`
+
 #### Java 9 issues
 
 When trying to pull from S3, Gradle doesn't work with Java 9 properly.  So set `JAVA_HOME` to 1.8 first (for now):

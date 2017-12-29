@@ -16,6 +16,8 @@ buildscript {
     ext.kotlin_version = '1.2.10'
     ext.jackson_version = '2.9.3'
     ext.protobuf_version = '3.5.1'
+    ext.shadow_plugin_version = gradle.gradleVersion <= '2.7' ? '1.2.4' : '2.0.2' // latest version for AWS Gradle
+    ext.protobuf_plugin_version = gradle.gradleVersion <= '2.7' ? '0.7.5' : '0.8.3' // latest version for AWS Gradle
 
     repositories {
         mavenCentral()
@@ -24,8 +26,8 @@ buildscript {
     dependencies {
         classpath 'com.amazonaws:aws-java-sdk-core:1.11.5'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4' // latest version for Gradle 2.7 (AWS)
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.5' // latest version for Gradle 2.7
+        classpath "com.github.jengelman.gradle.plugins:shadow:$shadow_plugin_version" // latest version for Gradle 2.7 (AWS)
+        classpath "com.google.protobuf:protobuf-gradle-plugin:$protobuf_plugin_version"
     }
 }
 
@@ -82,6 +84,7 @@ dependencies {
 
         // Kotlin
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version",
+        "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version",
 
         // AWS
         'com.amazonaws:aws-lambda-java-core:1.1.0',
@@ -131,4 +134,9 @@ idea {
         // If you have additional sourceSets and/or codegen plugins, add all of them
         sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/grpc")
     }
+}
+
+task runLocal(type: Exec) {
+    dependsOn("shadowJar")
+    commandLine 'sam', 'local', 'start-api', '-t', 'cloudformation/template.yaml'
 }

@@ -27,7 +27,7 @@ abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMes
     override fun handleRequest(input: InputStream, output: OutputStream, context: Context) {
         // Receive input string
         val inputString = CharStreams.toString(InputStreamReader(input, UTF_8))
-        logger.info { "Received input: $inputString" }
+        logger.debug { "Received input: $inputString" }
 
         // Parse the API gateway input (JSON)
         val inputContainer = ApiGatewayInput.read(inputString)
@@ -35,7 +35,7 @@ abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMes
 
         // Parse the actual request (dependent on content type)
         val request: I = parseRequestBody(inputContainer)
-        logger.info { "Handling parsed request: $request" }
+        logger.debug { "Handling parsed request: $request" }
 
         // Actually handle the request
         handle(request, { response ->
@@ -46,12 +46,11 @@ abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMes
             val apiOutput = ApiGatewayOutput.create(
                     headers = mapOf("X-Powered-By" to "WordFart"),
                     output = encodeResponseBody(inputContainer, response))
-            logger.info { "Encoded output: $apiOutput" }
+            logger.debug { "Output: $apiOutput" }
 
-            val json = gson.typedToJson(apiOutput)
-            logger.info { "Encoded JSON output: $json" }
-
-            output.write(json.toByteArray(UTF_8))
+            JsonWriter(OutputStreamWriter(output, UTF_8)).use {
+                gson.typedToJson(apiOutput, it)
+            }
         })
     }
 

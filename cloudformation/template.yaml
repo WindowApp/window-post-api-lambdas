@@ -38,8 +38,8 @@ Resources:
     Properties:
       Handler: codes.rik.window.api.post.handler.SubmitPostHandler
       CodeUri: ../build/libs/post-api-lambdas-0.1-all.jar
-      Timeout: 30
-      MemorySize: 512
+      Timeout: 15
+      MemorySize: 256
       Runtime: java8
       Role: !GetAtt WindowPostApisExecutionRole.Arn
       Events:

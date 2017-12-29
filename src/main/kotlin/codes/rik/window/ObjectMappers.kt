@@ -1,5 +1,5 @@
 package codes.rik.window
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.google.gson.Gson
 
-val windowObjectMapper = jacksonObjectMapper()
+val gson = Gson()

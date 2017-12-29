@@ -1,21 +1,22 @@
 package codes.rik.window.lambda.common
 
+import codes.rik.window.gson
 import codes.rik.window.lambda.common.ContentType.JSON
 import codes.rik.window.lambda.common.ContentType.PROTOBUF
-import codes.rik.window.windowObjectMapper
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.salomonbrys.kotson.typedToJson
 import com.google.common.io.CharStreams
+import com.google.gson.stream.JsonWriter
 import com.google.protobuf.AbstractMessage
 import com.google.protobuf.Message
-import mu.KLogging
 import mu.KotlinLogging
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.util.*
+import kotlin.text.Charsets.UTF_8
 
 private val logger = KotlinLogging.logger {}
 
@@ -25,7 +26,7 @@ abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMes
 
     override fun handleRequest(input: InputStream, output: OutputStream, context: Context) {
         // Receive input string
-        val inputString = CharStreams.toString(InputStreamReader(input, Charsets.UTF_8))
+        val inputString = CharStreams.toString(InputStreamReader(input, UTF_8))
         logger.info { "Received input: $inputString" }
 
         // Parse the API gateway input (JSON)
@@ -42,13 +43,15 @@ abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMes
             logger.info { "Response: $response" }
 
             // Encode a response body
-            val apiOutput = ApiGatewayOutput(
+            val apiOutput = ApiGatewayOutput.create(
                     headers = mapOf("X-Powered-By" to "WordFart"),
                     output = encodeResponseBody(inputContainer, response))
-
             logger.info { "Encoded output: $apiOutput" }
 
-            objectMapper.writeValue(output, apiOutput)
+            val json = gson.typedToJson(apiOutput)
+            logger.info { "Encoded JSON output: $json" }
+
+            output.write(json.toByteArray(UTF_8))
         })
     }
 
@@ -71,5 +74,3 @@ private fun AbstractMessage.newFromJson(json: String): Message {
     com.google.protobuf.util.JsonFormat.parser().merge(json, builder)
     return builder.build()
 }
-
-private val objectMapper = windowObjectMapper

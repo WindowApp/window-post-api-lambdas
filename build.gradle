@@ -90,12 +90,9 @@ dependencies {
         'com.amazonaws:aws-lambda-java-core:1.1.0',
         'com.amazonaws:aws-lambda-java-log4j:1.0.0',
 
-        // Jackson
-        "com.fasterxml.jackson.core:jackson-core:$jackson_version",
-        "com.fasterxml.jackson.core:jackson-databind:$jackson_version",
-        "com.fasterxml.jackson.core:jackson-annotations:$jackson_version",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version",
-        'com.hubspot.jackson:jackson-datatype-protobuf:0.9.5',
+        // Gson
+        'com.github.salomonbrys.kotson:kotson:2.5.0',
+
 
         // Logging
         'io.github.microutils:kotlin-logging:1.4.8',

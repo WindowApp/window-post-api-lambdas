@@ -27,16 +27,17 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:GetObject
+                  - s3:PutObject
                 Resource:
-                  - !Sub "arn:aws:s3:::${AWS::StackName}-${AWS::Region}-${AWS::AccountId}*"
+                  - !GetAtt PostInputBucket.Arn
 
   ###
   ### Lambdas
   ###
-  SubmitPost:
+  CreatePost:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: codes.rik.window.api.post.handler.SubmitPostHandler
+      Handler: codes.rik.window.api.post.handler.CreatePostHandler
       CodeUri: ../build/libs/post-api-lambdas-0.1-all.jar
       Timeout: 15
       MemorySize: 128
@@ -46,5 +47,12 @@ Resources:
         PostEvent:
           Type: Api
           Properties:
-            Path: /submit
+            Path: /create
             Method: post
+
+  ###
+  ### S3
+  ###
+  PostInputBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete

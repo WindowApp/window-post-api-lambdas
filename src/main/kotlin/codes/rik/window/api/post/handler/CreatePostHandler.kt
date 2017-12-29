@@ -4,7 +4,7 @@ import codes.rik.window.api.post.SubmitPost.SubmitPostRequest
 import codes.rik.window.api.post.SubmitPost.SubmitPostResponse
 import codes.rik.window.lambda.common.WindowApiGatewayHandler
 
-class SubmitPostHandler: WindowApiGatewayHandler<SubmitPostRequest, SubmitPostResponse>(
+class CreatePostHandler : WindowApiGatewayHandler<SubmitPostRequest, SubmitPostResponse>(
         SubmitPostRequest.getDefaultInstance()) {
 
     override fun handle(input: SubmitPostRequest, callback: (SubmitPostResponse) -> Unit) {

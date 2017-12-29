@@ -1,0 +1,5 @@
+{
+  "CreatePost": {
+    "WINDOW_PostInputBucketArn": "arn:aws:s3:::window-post-api-lambdas-postinputbucket-test"
+  }
+}

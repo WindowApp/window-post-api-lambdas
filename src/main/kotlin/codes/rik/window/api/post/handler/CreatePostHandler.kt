@@ -10,7 +10,6 @@ import com.amazonaws.HttpMethod
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
 import mu.KotlinLogging
 import java.time.Instant.now
-import java.util.*
 
 private val logger = KotlinLogging.logger {}
 class CreatePostHandler : WindowApiGatewayHandler<CreatePostRequest, CreatePostResponse>(

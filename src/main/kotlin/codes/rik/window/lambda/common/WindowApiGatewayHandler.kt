@@ -45,7 +45,7 @@ abstract class WindowApiGatewayHandler<in I: AbstractMessage, out O: AbstractMes
 
             // Encode a response body
             val apiOutput = ApiGatewayOutput.create(
-                    headers = mapOf("X-Powered-By" to "WordFart"),
+                    headers = mapOf("X-Powered-By" to "Window"),
                     output = encodeResponseBody(inputContainer, response))
             logger.debug { "Output: $apiOutput" }
 

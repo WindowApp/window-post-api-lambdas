@@ -4,3 +4,5 @@ hs_err_pid*
 # Build
 /.gradle
 /build
+/out
+

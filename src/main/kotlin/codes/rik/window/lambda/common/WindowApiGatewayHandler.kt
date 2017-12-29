@@ -6,6 +6,7 @@ import codes.rik.window.windowObjectMapper
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.io.CharStreams
 import com.google.protobuf.AbstractMessage
 import com.google.protobuf.Message

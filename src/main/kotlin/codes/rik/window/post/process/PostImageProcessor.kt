@@ -3,18 +3,15 @@ package codes.rik.window.post.process
 import codes.rik.window.post.status.PostStatus.DONE
 import codes.rik.window.post.status.PostStatus.PROCESSING
 import codes.rik.window.post.status.StatusDao
-import codes.rik.window.post.upload.S3UploadDao
-import codes.rik.window.util.S3Bucket
-import com.amazonaws.services.s3.AmazonS3
+import codes.rik.window.post.upload.UploadDao
 
 class PostImageProcessor(
         private val statusDao: StatusDao,
-        private val s3: AmazonS3,
         private val processedImagesDao: ProcessedImagesDao) {
 
-    fun processImage(inputBucket: S3Bucket, uploadKey: String) {
+    fun processImage(uploadDao: UploadDao, uploadKey: String) {
         // Retrieve the image bytes
-        val uploadedImage = S3UploadDao(s3, inputBucket).getUploadByKey(uploadKey)
+        val uploadedImage = uploadDao.getUploadByKey(uploadKey)
 
         // Flip to processing
         statusDao.updateStatus(uploadedImage.userId, uploadedImage.postId, PROCESSING)

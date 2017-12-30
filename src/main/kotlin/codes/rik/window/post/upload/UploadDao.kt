@@ -11,6 +11,8 @@ import com.google.common.io.ByteStreams
 import mu.KotlinLogging
 import java.net.URL
 import java.time.Instant
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 private val logger = KotlinLogging.logger {}
 class S3UploadDao(
@@ -35,6 +37,11 @@ class S3UploadDao(
                 postId = PostId(key),
                 bytes = ByteStreams.toByteArray(obj.objectContent))
     }
+}
+
+class S3UploadDaoRegistry(private val s3: AmazonS3) {
+    private val registry: ConcurrentMap<S3Bucket, S3UploadDao> = ConcurrentHashMap()
+    fun get(bucket: S3Bucket) = registry.getOrPut(bucket, { S3UploadDao(s3, bucket) })
 }
 
 interface UploadDao {

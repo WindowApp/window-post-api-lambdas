@@ -1,4 +1,4 @@
-package codes.rik.window.post.api.handler
+package codes.rik.window.post.handler.api
 
 import codes.rik.window.lambda.common.WindowApiGatewayHandler
 import codes.rik.window.post.api.CreatePost.CreatePostRequest
@@ -12,7 +12,7 @@ class CreatePostHandler : WindowApiGatewayHandler<CreatePostRequest, CreatePostR
         CreatePostRequest.getDefaultInstance()) {
     private val uploadManager = environment.uploadManager
 
-    override fun handle(input: CreatePostRequest, callback: (CreatePostResponse) -> Unit) {
+    override fun handle0(input: CreatePostRequest, callback: (CreatePostResponse) -> Unit) {
         val userId = UserId(input.userId ?: "")
 
         with(uploadManager.createUpload(userId)) {

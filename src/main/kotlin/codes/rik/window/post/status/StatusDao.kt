@@ -8,9 +8,11 @@ import codes.rik.window.util.UserId
 import codes.rik.window.util.extension.DynamoDBField
 import codes.rik.window.util.extension.aV
 import codes.rik.window.util.extension.ddb
+import codes.rik.window.util.extension.update
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest
+import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest
 import java.time.Instant
 import java.time.Instant.now
 
@@ -21,9 +23,7 @@ class DynamoStatusDao(
     override fun createPost(userId: UserId, postId: PostId, expiration: Instant) {
         val now = now()
 
-        val postMap = mapOf(
-                USER_ID to userId.id.aV,
-                POST_ID to postId.id.aV,
+        val postMap = userPost(userId, postId) + mapOf(
                 STATUS to CREATED.aV,
                 CREATED_TIME to now.aV,
                 UPDATED_TIME to now.aV,
@@ -32,10 +32,22 @@ class DynamoStatusDao(
         dynamoDb.putItem(PutItemRequest(statusTable.name, postMap.ddb))
     }
 
+    override fun updateStatus(userId: UserId, postId: PostId, status: PostStatus) {
+        dynamoDb.updateItem(UpdateItemRequest().apply {
+            tableName = statusTable.name
+            key = userPost(userId, postId).ddb
+            attributeUpdates = mapOf(STATUS to status.aV.update).ddb
+        })
+    }
 }
+
+private fun userPost(userId: UserId, postId: PostId) = mapOf(
+        USER_ID to userId.id.aV,
+        POST_ID to postId.id.aV)
 
 interface StatusDao {
     fun createPost(userId: UserId, postId: PostId, expiration: Instant)
+    fun updateStatus(userId: UserId, postId: PostId, status: PostStatus)
 }
 
 

@@ -9,7 +9,7 @@ import java.net.URL
 import java.time.Instant
 import java.time.Instant.now
 
-private val UPLOAD_EXPIRATION = 2.minutes
+private val UPLOAD_EXPIRATION = 10.minutes // TODO
 private val logger = KotlinLogging.logger {}
 
 class UploadManager(

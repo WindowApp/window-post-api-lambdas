@@ -35,7 +35,6 @@ Resources:
     Properties:
       AccessControl: Private
       VersioningConfiguration:
-        # The guide recommends Enabled but I can't see why
         Status: Suspended
 
   ###
@@ -123,8 +122,10 @@ Resources:
                   - s3:CreateBucket
                   - s3:DeleteBucket
                   - s3:ListBucket
+                  - s3:PutBucketNotification
+                  - s3:PutBucketPolicy
                 Resource:
-                  - "arn:aws:s3:::${ProjectName}-*"
+                  - !Sub "arn:aws:s3:::${ProjectName}-*"
               # S3 for deployment artifacts
               - Effect: Allow
                 Action:

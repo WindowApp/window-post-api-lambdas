@@ -1,6 +1,10 @@
 {
   "CreatePost": {
-    "WINDOW_PostInputBucketArn": "arn:aws:s3:::window-post-api-lambdas-postinputbucket-test",
+    "WINDOW_PostInputBucketArn": "arn:aws:s3:::window-post-api-lambdas-postinputbucket-xg6nrauvn225",
+    "WINDOW_PostStatusTableArn": "arn:aws:dynamodb:us-west-2:487129032168:table/window-post-api-lambdas-PostStatusTable-1GI0K5E1JRJBP"
+  },
+  "ProcessUpload": {
+    "WINDOW_ProcessedImagesBucketArn": "arn:aws:s3:::window-post-api-lambdas-processedimagesbucket-rnzch6865iqu",
     "WINDOW_PostStatusTableArn": "arn:aws:dynamodb:us-west-2:487129032168:table/window-post-api-lambdas-PostStatusTable-1GI0K5E1JRJBP"
   }
 }

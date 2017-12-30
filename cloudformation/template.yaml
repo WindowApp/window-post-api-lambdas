@@ -35,8 +35,13 @@ Resources:
               - s3:GetObject
               - s3:PutObject
             Resource:
-              - !Sub "${PostInputBucket.Arn}/*"
-              - arn:aws:s3:::window-post-api-lambdas-postinputbucket-test/*
+              # input bucket
+              #- !Sub "${PostInputBucket.Arn}/*"
+              #- arn:aws:s3:::window-post-api-lambdas-postinputbucket-test/*
+              #- !Sub "${ProcessedImagesBucket.Arn}/*"
+              - !Sub "arn:aws:s3:::${AWS::StackName}-*"
+              # doing above to break circular dependency, though it sucks
+
           # DynamoDB
           - Effect: Allow
             Action:
@@ -45,7 +50,6 @@ Resources:
               - dynamodb:UpdateItem
               - dynamodb:Query
               - dynamodb:Scan
-
             Resource: !GetAtt PostStatusTable.Arn
       Roles:
       - !Ref LambdasExecutionRole
@@ -69,7 +73,7 @@ Resources:
     Type: AWS::Serverless::Function
     DependsOn: LambdasExecutionRole
     Properties:
-      Handler: codes.rik.window.post.api.handler.CreatePostHandler
+      Handler: codes.rik.window.post.handler.api.CreatePostHandler
       Role: !GetAtt LambdasExecutionRole.Arn
       CodeUri: ../build/libs/post-api-lambdas-0.1-all.jar
       Timeout: 15
@@ -80,18 +84,46 @@ Resources:
           WINDOW_PostInputBucketArn: !GetAtt PostInputBucket.Arn
           WINDOW_PostStatusTableArn: !GetAtt PostStatusTable.Arn
       Events:
-        PostEvent:
+        CreateEvent:
           Type: Api
           Properties:
             Path: /create
             Method: post
 
+  ProcessUpload:
+    Type: AWS::Serverless::Function
+    DependsOn: LambdasExecutionRole
+    Properties:
+      Handler: codes.rik.window.post.handler.s3.ProcessUploadHandler
+      Role: !GetAtt LambdasExecutionRole.Arn
+      CodeUri: ../build/libs/post-api-lambdas-0.1-all.jar
+      Timeout: 15
+      MemorySize: 192
+      Runtime: java8
+      Environment:
+        Variables:
+          WINDOW_ProcessedImagesBucketArn: !GetAtt ProcessedImagesBucket.Arn
+          WINDOW_PostStatusTableArn: !GetAtt PostStatusTable.Arn
+      Events:
+        S3PutEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref PostInputBucket
+            Events: s3:ObjectCreated:*
+
   ###
   ### S3
   ###
+
+  # input posts
   PostInputBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
+
+  # processed posts
+  ProcessedImagesBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
 
   ###
   ### DDB

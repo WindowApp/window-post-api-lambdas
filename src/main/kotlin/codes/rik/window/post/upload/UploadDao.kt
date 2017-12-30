@@ -2,10 +2,12 @@ package codes.rik.window.post.upload
 
 import codes.rik.window.util.PostId
 import codes.rik.window.util.S3Bucket
+import codes.rik.window.util.UserId
 import codes.rik.window.util.extension.withExpiration
 import com.amazonaws.HttpMethod.PUT
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
+import com.google.common.io.ByteStreams
 import mu.KotlinLogging
 import java.net.URL
 import java.time.Instant
@@ -24,8 +26,22 @@ class S3UploadDao(
                 .withMethod(PUT)
                 .withExpiration(expiration))
     }
+
+    override fun getUploadByKey(key: String): UploadedImage {
+        val obj = s3.getObject(inputBucket.name, key)
+        return UploadedImage(
+                userId = UserId(obj.objectMetadata.getUserMetaDataOf("userId")),
+                postId = PostId(key),
+                bytes = ByteStreams.toByteArray(obj.objectContent))
+    }
 }
 
 interface UploadDao {
     fun createUploadUrl(postId: PostId, expiration: Instant): URL
+    fun getUploadByKey(key: String): UploadedImage
 }
+
+data class UploadedImage(
+        val userId: UserId,
+        val postId: PostId,
+        val bytes: ByteArray)

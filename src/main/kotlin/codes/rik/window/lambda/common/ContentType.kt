@@ -15,5 +15,7 @@ enum class ContentType(val httpContentType: String) {
 
 private object ContentTypeDeserializer: JsonDeserializer<ContentType> {
     override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?) =
-            json?.asJsonPrimitive?.string?.let { string -> ContentType.values().firstOrNull { it.httpContentType == string } }
+            json?.asJsonPrimitive?.string
+                    ?.trim()
+                    ?.let { string -> ContentType.values().firstOrNull { it.httpContentType == string } }
 }

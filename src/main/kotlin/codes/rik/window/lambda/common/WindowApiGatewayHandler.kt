@@ -1,9 +1,9 @@
 package codes.rik.window.lambda.common
 
-import codes.rik.window.api.post.environment.Environment
-import codes.rik.window.gson
 import codes.rik.window.lambda.common.ContentType.JSON
 import codes.rik.window.lambda.common.ContentType.PROTOBUF
+import codes.rik.window.post.api.environment.Environment
+import codes.rik.window.util.gson
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler
 import com.github.salomonbrys.kotson.typedToJson

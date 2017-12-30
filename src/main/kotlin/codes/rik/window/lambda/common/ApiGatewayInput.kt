@@ -1,6 +1,6 @@
 package codes.rik.window.lambda.common
 
-import codes.rik.window.gson
+import codes.rik.window.util.gson
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.annotations.SerializedName
 

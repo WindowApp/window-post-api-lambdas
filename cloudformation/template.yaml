@@ -29,6 +29,7 @@ Resources:
       PolicyName: WindowPostApiLambasExecutionPolicy
       PolicyDocument:
         Statement:
+          # S3
           - Effect: Allow
             Action:
               - s3:GetObject
@@ -36,6 +37,16 @@ Resources:
             Resource:
               - !Sub "${PostInputBucket.Arn}/*"
               - arn:aws:s3:::window-post-api-lambdas-postinputbucket-test/*
+          # DynamoDB
+          - Effect: Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:Query
+              - dynamodb:Scan
+
+            Resource: !GetAtt PostStatusTable.Arn
       Roles:
       - !Ref LambdasExecutionRole
       Groups:
@@ -58,15 +69,16 @@ Resources:
     Type: AWS::Serverless::Function
     DependsOn: LambdasExecutionRole
     Properties:
-      Handler: codes.rik.window.api.post.handler.CreatePostHandler
+      Handler: codes.rik.window.post.api.handler.CreatePostHandler
       Role: !GetAtt LambdasExecutionRole.Arn
       CodeUri: ../build/libs/post-api-lambdas-0.1-all.jar
       Timeout: 15
-      MemorySize: 128
+      MemorySize: 256
       Runtime: java8
       Environment:
         Variables:
           WINDOW_PostInputBucketArn: !GetAtt PostInputBucket.Arn
+          WINDOW_PostStatusTableArn: !GetAtt PostStatusTable.Arn
       Events:
         PostEvent:
           Type: Api
@@ -80,4 +92,31 @@ Resources:
   PostInputBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
+
+  ###
+  ### DDB
+  ###
+  PostStatusTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: UserId
+          AttributeType: S
+        -
+          AttributeName: PostId
+          AttributeType: S
+      KeySchema:
+        -
+          AttributeName: UserId
+          KeyType: HASH
+        -
+          AttributeName: PostId
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ExpirationTime
+        Enabled: true
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
 

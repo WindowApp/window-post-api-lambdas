@@ -1,4 +1,4 @@
-package codes.rik.window
+package codes.rik.window.util
 
 import com.google.gson.Gson
 

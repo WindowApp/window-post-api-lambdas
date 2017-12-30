@@ -73,7 +73,7 @@ Resources:
       Role: !GetAtt LambdasExecutionRole.Arn
       CodeUri: ../build/libs/post-api-lambdas-0.1-all.jar
       Timeout: 15
-      MemorySize: 256
+      MemorySize: 192
       Runtime: java8
       Environment:
         Variables:

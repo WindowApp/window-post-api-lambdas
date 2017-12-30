@@ -28,7 +28,7 @@ class UploadManager(
         statusDao.createPost(userId, postId, expiration)
 
         // Generate a temporary upload link
-        val uploadUrl = uploadDao.createUploadUrl(postId, expiration)
+        val uploadUrl = uploadDao.createUploadUrl(userId, postId, expiration)
         logger.debug { "Created upload link: $uploadUrl" }
 
         return PendingUpload(postId, uploadUrl, expiration)

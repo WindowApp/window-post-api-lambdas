@@ -17,27 +17,28 @@ class S3UploadDao(
         private val s3: AmazonS3,
         private val inputBucket: S3Bucket): UploadDao {
 
-    override fun createUploadUrl(postId: PostId, expiration: Instant): URL {
+    override fun createUploadUrl(userId: UserId, postId: PostId, expiration: Instant): URL {
         // Create a S3 URL
         logger.debug { "Calling S3 to generate a presigned URL for $postId" }
         return s3.generatePresignedUrl(GeneratePresignedUrlRequest(
                 inputBucket.name, // bucket name
                 postId.id) // key
                 .withMethod(PUT)
-                .withExpiration(expiration))
+                .withExpiration(expiration)
+                .apply { putCustomRequestHeader("x-amz-meta-userid", userId.id) })
     }
 
     override fun getUploadByKey(key: String): UploadedImage {
         val obj = s3.getObject(inputBucket.name, key)
         return UploadedImage(
-                userId = UserId(obj.objectMetadata.getUserMetaDataOf("userId")),
+                userId = UserId(obj.objectMetadata.getUserMetaDataOf("userid")),
                 postId = PostId(key),
                 bytes = ByteStreams.toByteArray(obj.objectContent))
     }
 }
 
 interface UploadDao {
-    fun createUploadUrl(postId: PostId, expiration: Instant): URL
+    fun createUploadUrl(userId: UserId, postId: PostId, expiration: Instant): URL
     fun getUploadByKey(key: String): UploadedImage
 }
 

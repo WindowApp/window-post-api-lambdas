@@ -19,7 +19,7 @@ class S3ProcessedImagesDao(
                 ByteArrayInputStream(imageBytes), // input
                 ObjectMetadata().apply { // metadata
                     contentLength = imageBytes.size.toLong()
-                    userMetadata = mapOf("userId" to userId.id)
+                    userMetadata = mapOf("userid" to userId.id)
                     // TODO: content type etc...
                 }))
     }

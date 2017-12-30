@@ -13,7 +13,7 @@ class CreatePostHandler : WindowApiGatewayHandler<CreatePostRequest, CreatePostR
     private val uploadManager = environment.uploadManager
 
     override fun handle(input: CreatePostRequest, callback: (CreatePostResponse) -> Unit) {
-        val userId = UserId("rik") // FIXME
+        val userId = UserId(input.userId ?: "")
 
         with(uploadManager.createUpload(userId)) {
             logger.info("Got pending post upload: $this")
